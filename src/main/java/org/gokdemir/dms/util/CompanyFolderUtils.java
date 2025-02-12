@@ -1,4 +1,3 @@
-// src/main/java/org/gokdemir/dms/util/CompanyFolderUtils.java
 package org.gokdemir.dms.util;
 
 import org.gokdemir.dms.exception.BaseException;

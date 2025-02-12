@@ -5,7 +5,7 @@ import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.ManyToOne;
 import org.gokdemir.dms.enums.DocumentCategory;
-import org.gokdemir.dms.enums.DocumentFlow;
+import org.gokdemir.dms.enums.DocumentFormat;
 
 public class Document {
     @Column(name = "name", length = 100, nullable = false)
@@ -16,7 +16,7 @@ public class Document {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "type", length = 20)
-    private DocumentFlow type;
+    private DocumentFormat type;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "category", length = 5)

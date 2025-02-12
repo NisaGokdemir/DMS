@@ -3,7 +3,7 @@ package org.gokdemir.dms.enums;
 import lombok.Getter;
 
 @Getter
-public enum DocumentFlow {
+public enum DocumentFormat {
     PDF(".pdf"),
     DOC(".doc"),
     DOCX(".docx"),
@@ -31,7 +31,7 @@ public enum DocumentFlow {
 
     private final String extension;
 
-    DocumentFlow(String extension) {
+    DocumentFormat(String extension) {
         this.extension = extension;
     }
 }
