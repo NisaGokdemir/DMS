@@ -1,45 +1,56 @@
 package org.gokdemir.dms.controller.impl;
 
+import lombok.RequiredArgsConstructor;
 import org.gokdemir.dms.controller.IRestCompanyController;
 import org.gokdemir.dms.controller.RestBaseController;
 import org.gokdemir.dms.controller.RootEntity;
 import org.gokdemir.dms.dto.request.DtoCompanyIU;
 import org.gokdemir.dms.dto.response.DtoCompany;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.gokdemir.dms.service.ICompanyService;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/company")
 public class RestCompanyControllerImpl extends RestBaseController implements IRestCompanyController {
+
+    private final ICompanyService companyService;
+
+    @PostMapping("/save")
     @Override
-    public RootEntity<DtoCompany> saveCompany(DtoCompanyIU dtoCompanyIU) {
-        return null;
+    public RootEntity<DtoCompany> saveCompany(@RequestBody DtoCompanyIU dtoCompanyIU) {
+        return ok(companyService.saveCompany(dtoCompanyIU));
     }
 
+    @PutMapping("/update/{id}")
     @Override
-    public RootEntity<DtoCompany> updateCompany(Long id, DtoCompanyIU dtoCompanyIU) {
-        return null;
+    public RootEntity<DtoCompany> updateCompany(@PathVariable Long id, @RequestBody DtoCompanyIU dtoCompanyIU) {
+        return ok(companyService.updateCompany(id, dtoCompanyIU));
     }
 
+    @GetMapping("/active")
     @Override
     public RootEntity<List<DtoCompany>> getActiveCompanies() {
-        return null;
+        return ok(companyService.getActiveCompanies());
     }
 
+    @GetMapping("/inactive")
     @Override
     public RootEntity<List<DtoCompany>> getInactiveCompanies() {
-        return null;
+        return ok(companyService.getInactiveCompanies());
     }
 
+    @PutMapping("/deactivate/{id}")
     @Override
-    public RootEntity<String> deactivateCompany(Long id) {
-        return null;
+    public RootEntity<String> deactivateCompany(@PathVariable Long id) {
+        return ok(companyService.deactivateCompany(id));
     }
 
+    @PutMapping("/activate/{id}")
     @Override
-    public RootEntity<String> activateCompany(Long id) {
-        return null;
+    public RootEntity<String> activateCompany(@PathVariable Long id) {
+        return ok(companyService.activateCompany(id));
     }
 }
