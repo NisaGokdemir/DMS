@@ -8,8 +8,6 @@ import java.util.List;
 
 public interface ICompanyService {
 
-    //save - getactive - getinactive - deactivate - update
-
     public DtoCompany saveCompany(DtoCompanyIU dtoCompanyIU);
 
     public DtoCompany updateCompany(Long id, DtoCompanyIU dtoCompanyIU);
@@ -18,7 +16,7 @@ public interface ICompanyService {
 
     public List<DtoCompany> getInactiveCompanies();
 
-    public void deactivateCompany(Long id);
+    public String deactivateCompany(Long id);
 
-    public void activateCompany(Long id);
+    public String activateCompany(Long id);
 }

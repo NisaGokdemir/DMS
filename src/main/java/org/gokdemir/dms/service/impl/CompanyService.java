@@ -79,7 +79,7 @@ public class CompanyService implements ICompanyService {
     }
 
     @Transactional
-    public void deactivateCompany(Long id) {
+    public String deactivateCompany(Long id) {
         Company company = getCompanyById(id);
         checkIfCompanyIsInactive(company);
 
@@ -92,10 +92,12 @@ public class CompanyService implements ICompanyService {
         company.setFolderPath(archivedFolderPath);
         company.setActive(false);
         companyRepository.save(company);
+
+        return "Company deactivated successfully";
     }
 
     @Transactional
-    public void activateCompany(Long id) {
+    public String activateCompany(Long id) {
         Company company = getCompanyById(id);
         checkIfCompanyIsActive(company);
 
@@ -108,6 +110,7 @@ public class CompanyService implements ICompanyService {
         company.setFolderPath(activeFolderPath);
         company.setActive(true);
         companyRepository.save(company);
+        return "Company activated successfully";
     }
 
     private void checkIfCompanyIsActive(Company company) {
