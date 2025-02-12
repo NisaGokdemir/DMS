@@ -1,3 +1,4 @@
+// src/main/java/org/gokdemir/dms/util/CompanyFolderUtils.java
 package org.gokdemir.dms.util;
 
 import org.gokdemir.dms.exception.BaseException;
@@ -10,8 +11,7 @@ public class CompanyFolderUtils {
 
     public static String createCompanyFolder(String baseFolderPath, String companyName) {
         String companyFolderPath = baseFolderPath + File.separator + companyName;
-        validateFolderPath(companyFolderPath, companyName);
-
+        // Önce klasörün varlığını kontrol etmeden oluşturmaya çalışın.
         File companyFolder = new File(companyFolderPath);
         if (!companyFolder.exists()) {
             boolean created = companyFolder.mkdirs();
@@ -19,9 +19,11 @@ public class CompanyFolderUtils {
                 throw new BaseException(new ErrorMessage(MessageType.FOLDER_CREATION_FAILED, companyName));
             }
         }
-
+        // İsteğe bağlı: Oluşturulan klasörün varlığını doğrulayabilirsiniz.
+        // validateFolderPath(companyFolderPath, companyName);
         return companyFolderPath;
     }
+
 
     public static String renameCompanyFolder(String currentFolderPath, String newFolderPath, String companyName) {
         validateFolderPath(currentFolderPath, companyName);
@@ -61,4 +63,20 @@ public class CompanyFolderUtils {
         String parentDir = currentFolder.getParent();
         return parentDir + File.separator + currentFolder.getName().replaceFirst("^archived_", "");
     }
+
+    public static String renameCompanyFolderPath(String currentFolderPath, String oldCompanyName, String newCompanyName) {
+        // Eski klasör yolunu doğrula
+        validateFolderPath(currentFolderPath, oldCompanyName);
+
+        // Yeni klasör yolunu oluştur
+        String newFolderPath = currentFolderPath.replace(oldCompanyName, newCompanyName);
+
+        // Eski klasörü yeni isme göre yeniden adlandır
+        if (!renameFolder(currentFolderPath, newFolderPath)) {
+            throw new BaseException(new ErrorMessage(MessageType.FOLDER_RENAME_FAILED, oldCompanyName));
+        }
+
+        return newFolderPath;
+    }
+
 }

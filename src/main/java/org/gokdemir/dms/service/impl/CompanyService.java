@@ -26,7 +26,7 @@ public class CompanyService implements ICompanyService {
     private final CompanyMapper companyMapper;
 
     @Value("${company.base.folder}")
-    private String baseFolderPath;
+    private String baseFolderPath ;
 
     private Company createCompany(Company company) {
         validateCompanyName(company.getName());
@@ -53,18 +53,32 @@ public class CompanyService implements ICompanyService {
         return companyMapper.toDto(company);
     }
 
+
     @Transactional
     public DtoCompany updateCompany(Long id, DtoCompanyIU dtoCompanyIU) {
         Company company = getCompanyById(id);
 
+        // Eğer isim değişiyorsa, yeni ismi doğrula ve klasör adını değiştir
         if (!company.getName().equals(dtoCompanyIU.getName())) {
             validateCompanyName(dtoCompanyIU.getName());
+
+            // Klasör adı değişikliği
+            String updatedFolderPath = CompanyFolderUtils.renameCompanyFolderPath(
+                    company.getFolderPath(),
+                    company.getName(),  // Eski isim
+                    dtoCompanyIU.getName()  // Yeni isim
+            );
+
+            company.setFolderPath(updatedFolderPath);  // Yeni klasör yolunu set et
         }
 
+        // Firmanın ismini güncelle
         company.setName(dtoCompanyIU.getName());
         companyRepository.save(company);
+
         return companyMapper.toDto(company);
     }
+
 
     @Transactional
     public List<DtoCompany> getActiveCompanies() {
