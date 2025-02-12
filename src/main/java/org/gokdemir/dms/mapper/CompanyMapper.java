@@ -18,10 +18,4 @@ public interface CompanyMapper {
     // 📌 Company sınıfından DtoCompany sınıfına dönüşüm yapacak olan map metodu
     List<DtoCompany> toDtoList(List<Company> companyList);
 
-
-//    List<DtoPaymentMethod> entitiesToDtoPaymentMethods(List<PaymentMethod> paymentMethods);
-//
-//    @Mapping(target = "createTime", ignore = true)
-//    @Mapping(target = "id", ignore = true)
-//    void DtoPaymentMethodIUToEntity(DtoPaymentMethodIU dtoPaymentMethodIU, @MappingTarget PaymentMethod paymentMethod);
 }

@@ -19,4 +19,6 @@ public interface ICompanyService {
     public List<DtoCompany> getInactiveCompanies();
 
     public void deactivateCompany(Long id);
+
+    public void activateCompany(Long id);
 }

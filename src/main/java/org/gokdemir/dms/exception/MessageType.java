@@ -11,8 +11,11 @@ public enum MessageType {
     REFRESH_TOKEN_NOT_FOUND("1003", "refresh token bulunamadı"),
     USERNAME_OR_PASSWORD_INVALID("1004","kullanıcı adı veya şifre hatalı"),
     COMPANY_ALREADY_EXISTS("1005", "Bu isimde bir firma zaten mevcut!"),
-    FOLDER_CREATION_FAILED("1006", "Firma klasörü oluşturulamadı!");
-
+    FOLDER_CREATION_FAILED("1006", "Firma klasörü oluşturulamadı!"),
+    FOLDER_RENAME_FAILED("1007", "Firma klasörü adı değiştirilemedi!"),
+    FOLDER_NOT_FOUND("1008", "Firma klasörü bulunamadı!"),
+    COMPANY_ALREADY_ACTIVE("1009", "Firma zaten aktif!"),
+    COMPANY_ALREADY_INACTIVE("1010", "Firma zaten pasif!");
 
     private String code;
 

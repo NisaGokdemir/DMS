@@ -5,6 +5,8 @@ import lombok.RequiredArgsConstructor;
 import org.gokdemir.dms.exception.BaseException;
 import org.gokdemir.dms.exception.ErrorMessage;
 import org.gokdemir.dms.exception.MessageType;
+import org.gokdemir.dms.mapper.CompanyMapper;
+import org.gokdemir.dms.util.CompanyFolderUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.gokdemir.dms.dto.request.DtoCompanyIU;
 import org.gokdemir.dms.dto.response.DtoCompany;
@@ -12,7 +14,7 @@ import org.gokdemir.dms.entity.Company;
 import org.gokdemir.dms.repository.CompanyRepository;
 import org.gokdemir.dms.service.ICompanyService;
 import org.springframework.stereotype.Service;
-import java.io.File;
+
 import java.util.List;
 
 @Service
@@ -21,19 +23,17 @@ public class CompanyService implements ICompanyService {
 
     private final CompanyRepository companyRepository;
 
-    // 📌 Firmaların kayıt edileceği ana klasör (application.properties dosyasından alınacak)
+    private final CompanyMapper companyMapper;
+
     @Value("${company.base.folder}")
     private String baseFolderPath;
 
-
-    @Transactional
-    public Company createCompany(Company company) {
+    private Company createCompany(Company company) {
         validateCompanyName(company.getName());
-        String companyFolderPath = createCompanyFolder(company.getName());
+        String companyFolderPath = CompanyFolderUtils.createCompanyFolder(baseFolderPath, company.getName());
         company.setFolderPath(companyFolderPath);
         return company;
     }
-
 
     private void validateCompanyName(String name) {
         if (companyRepository.existsByName(name)) {
@@ -41,39 +41,84 @@ public class CompanyService implements ICompanyService {
         }
     }
 
+    private Company getCompanyById(Long id) {
+        return companyRepository.findById(id)
+                .orElseThrow(() -> new BaseException(new ErrorMessage(MessageType.NO_RECORD_EXIST, id.toString())));
+    }
 
-    private String createCompanyFolder(String companyName) {
-        String companyFolderPath = baseFolderPath + File.separator + companyName;
-        File companyFolder = new File(companyFolderPath);
+    @Transactional
+    public DtoCompany saveCompany(DtoCompanyIU dtoCompanyIU) {
+        Company company = createCompany(companyMapper.toEntity(dtoCompanyIU));
+        companyRepository.save(company);
+        return companyMapper.toDto(company);
+    }
 
-        if (!companyFolder.exists()) {
-            boolean created = companyFolder.mkdirs();
-            if (!created) {
-                throw new BaseException(new ErrorMessage(MessageType.FOLDER_CREATION_FAILED, companyName));
-            }
+    @Transactional
+    public DtoCompany updateCompany(Long id, DtoCompanyIU dtoCompanyIU) {
+        Company company = getCompanyById(id);
+
+        if (!company.getName().equals(dtoCompanyIU.getName())) {
+            validateCompanyName(dtoCompanyIU.getName());
         }
 
-        return companyFolderPath;
+        company.setName(dtoCompanyIU.getName());
+        companyRepository.save(company);
+        return companyMapper.toDto(company);
     }
 
-
-
-    public DtoCompany saveCompany(DtoCompanyIU dtoCompanyIU) {
-        return null;
-    }
-
-    public DtoCompany updateCompany(Long id, DtoCompanyIU dtoCompanyIU) {
-        return null;
-    }
-
+    @Transactional
     public List<DtoCompany> getActiveCompanies() {
-        return null;
+        List<Company> companies = companyRepository.findAllActiveCompanies();
+        return companyMapper.toDtoList(companies);
     }
 
+    @Transactional
     public List<DtoCompany> getInactiveCompanies() {
-        return null;
+        List<Company> companies = companyRepository.findAllInactiveCompanies();
+        return companyMapper.toDtoList(companies);
     }
 
+    @Transactional
     public void deactivateCompany(Long id) {
+        Company company = getCompanyById(id);
+        checkIfCompanyIsInactive(company);
+
+        String archivedFolderPath = CompanyFolderUtils.renameCompanyFolder(
+                company.getFolderPath(),
+                CompanyFolderUtils.getArchivedFolderPath(company.getFolderPath()),
+                company.getName()
+        );
+
+        company.setFolderPath(archivedFolderPath);
+        company.setActive(false);
+        companyRepository.save(company);
+    }
+
+    @Transactional
+    public void activateCompany(Long id) {
+        Company company = getCompanyById(id);
+        checkIfCompanyIsActive(company);
+
+        String activeFolderPath = CompanyFolderUtils.renameCompanyFolder(
+                company.getFolderPath(),
+                CompanyFolderUtils.removeArchivedPrefix(company.getFolderPath()),
+                company.getName()
+        );
+
+        company.setFolderPath(activeFolderPath);
+        company.setActive(true);
+        companyRepository.save(company);
+    }
+
+    private void checkIfCompanyIsActive(Company company) {
+        if (company.isActive()) {
+            throw new BaseException(new ErrorMessage(MessageType.COMPANY_ALREADY_ACTIVE, company.getName()));
+        }
+    }
+
+    private void checkIfCompanyIsInactive(Company company) {
+        if (!company.isActive()) {
+            throw new BaseException(new ErrorMessage(MessageType.COMPANY_ALREADY_INACTIVE, company.getName()));
+        }
     }
 }
