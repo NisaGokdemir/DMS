@@ -19,8 +19,7 @@ public class CompanyFolderUtils {
                 throw new BaseException(new ErrorMessage(MessageType.FOLDER_CREATION_FAILED, companyName));
             }
         }
-        // İsteğe bağlı: Oluşturulan klasörün varlığını doğrulayabilirsiniz.
-        // validateFolderPath(companyFolderPath, companyName);
+
         return companyFolderPath;
     }
 

@@ -19,7 +19,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class CompanyService implements ICompanyService {
+public class CompanyServiceImpl implements ICompanyService {
 
     private final CompanyRepository companyRepository;
 
@@ -58,7 +58,6 @@ public class CompanyService implements ICompanyService {
     public DtoCompany updateCompany(Long id, DtoCompanyIU dtoCompanyIU) {
         Company company = getCompanyById(id);
 
-        // Eğer isim değişiyorsa, yeni ismi doğrula ve klasör adını değiştir
         if (!company.getName().equals(dtoCompanyIU.getName())) {
             validateCompanyName(dtoCompanyIU.getName());
 
